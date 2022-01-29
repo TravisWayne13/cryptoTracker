@@ -1,3 +1,9 @@
 .nav-wrapper {
   background-color: black;
 }
+
+.card-title {
+  font-size: 20px !important;
+  padding-bottom: 15px;
+  font-style: oblique;
+}
