@@ -1,21 +1,47 @@
-// The fetch assets has all of this info and more...------------------------------------------
+let currencyList = []
+let favList = []
 
-// fetch('https://data.messari.io/api/v1/assets?fields=id,slug,symbol,metrics/market_data/price_usd')
-//     .then(response => response.json())
-//     .then(data => {
-//       console.log(data)
-//     })
-//     .catch(e => {
-//       console.log(e)
-//     })
-// ----------------------------------------------------------------------------------------------------
-let num = 6.32434234
-let n = num.toFixed(2)
+// turns numbers into dollar format
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD'
 })
-console.log(n)
+
+const renderCurrencyList = () => {
+  for (let i = 0; i < 19; i++) {
+    let tFH = currencyList[i].tf
+    if (tFH > 0) {
+      tFH = tFH.toString().slice(0, 5) + '%'
+      color = 'green'
+    } else {
+      tFH = tFH.toString().slice(0, 5) + '%'
+      color = 'red'
+    }
+    let list = document.createElement('div')
+    list.innerHTML = `
+    <ul class="collection">
+    <li class="collection-item avatar">
+    <a class="secondary-content"><i data-target="info" 
+    data-name="${currencyList[i].name}" 
+    data-price="${currencyList[i].price}" 
+    data-allTimeHi="${currencyList[i].alltimehigh}" 
+    data-cycleLow="${currencyList[i].cyclelow}"
+    data-mcap="${currencyList[i].mcap}"
+    data-tf="${tFH}"
+     class="material-icons">grade</i></a>
+    <span class="title">${currencyList[i].name}</span>
+    <p>Price: ${currencyList[i].price} <br>
+       All time high: ${currencyList[i].alltimehigh} <br>
+       Cycle Low: ${currencyList[i].cyclelow} <br>
+       MCAP: ${currencyList[i].mcap} <p style="color:${color}" class="tf">24H: ${tFH}<p>
+    </p>
+    </li>
+    </ul>
+    `
+    document.getElementById('currency').append(list)
+  }
+}
+
 // fetch request getting news story and posting card elem
 fetch('https://data.messari.io/api/v1/news')
     .then(response => response.json())
@@ -37,7 +63,7 @@ fetch('https://data.messari.io/api/v1/news')
       </div>
         `
         document.getElementById('news').append(newsList)
-        console.log(news.data[i])
+        // console.log(news.data[i])
       }
     })
     .catch(e => {
@@ -45,54 +71,51 @@ fetch('https://data.messari.io/api/v1/news')
     })
 
 // this fetch gets all info about different cryptos
-fetch('https://data.messari.io/api/v1/assets')
+const myFetch = () => {
+  fetch('https://data.messari.io/api/v1/assets')
     .then(response => response.json())
     .then(assets => {
       for (i = 0;i <= 19; i++ ) {
+// Variables for all currency info
         let price = assets.data[i].metrics.market_data.price_usd
-        let newPrice = formatter.format(price)
         let lowPrice = assets.data[i].metrics.cycle_low.price
-        let newLowPrice = formatter.format(lowPrice)
         let highPrice = assets.data[i].metrics.all_time_high.price
-        let newHighPrice = formatter.format(highPrice)
         let MCAP = assets.data[i].metrics.marketcap.current_marketcap_usd
         let MCAPRounded = Math.round(MCAP)
-        let MCAPString = MCAPRounded.toString()
-        let newMCAP = MCAPString.slice(0, 3) + 'B'
-        let tFH = assets.data[i].metrics.market_data.percent_change_usd_last_24_hours
-        let tFHString = tFH.toString()
-        let newTFH = tFHString.slice(0, 5) + '%'
 
-        const currencyList = document.createElement('div')
-        currencyList.innerHTML = `
-        <ul class="collection">
-        <li class="collection-item avatar">
-        <img src="" alt="" class="circle">
-        <span class="title">${assets.data[i].name}</span>
-        <p>Price:$ ${newPrice} <br>
-           All time high:${newHighPrice} <br>
-           Cycle Low:${newLowPrice} <br>
-           MCAP:${newMCAP} 24H:${newTFH}
-        </p>
-        <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-      </li>
-      </ul>
-        `
-        document.getElementById('currency').append(currencyList)
-
-
-        console.log(newLowPrice)
-        console.log(newHighPrice)
-        console.log(newMCAP)
-        console.log(newTFH)
-        console.log(newPrice)
-        // console.log(assets.data[i].metrics.cycle_low.price)
+        currencyList.push({
+          name: assets.data[i].name,
+          price: formatter.format(price),
+          alltimehigh: formatter.format(highPrice),
+          cyclelow: formatter.format(lowPrice),
+          mcap: MCAPRounded.toString().slice(0, 3) + 'B',
+          tf: assets.data[i].metrics.market_data.percent_change_usd_last_24_hours 
+        })
       }
+    }).catch(e => {
+      console.log(e)
     })
+  }
 
-    // name: ${assets.data[0].name}
-    // Symbol: ${assets.data[0].symbol}
-    // Price:$ ${assets.data[0].metrics.market_data.price_usd}
-    // All time high:$ ${assets.data[0].metrics.all_time_high.price}
-    // Cycle low:$ ${assets.data[0].metrics.cycle_low.price}
+myFetch()
+setTimeout(renderCurrencyList, 1000)
+
+document.addEventListener('click', event =>{
+  if (event.target.className === 'material-icons') {
+    let currency = event.target.dataset
+    favList.push(currency)
+    localStorage.setItem(`currency`, JSON.stringify(favList))
+    console.log(favList)
+  }
+})
+// console.log(currencyList)
+  // window.addEventListener('load', () => {
+  //   const fetchInterval = 1000
+  
+  //   setInterval(renderCurrencyList, fetchInterval)
+  
+  // })
+
+
+
 
