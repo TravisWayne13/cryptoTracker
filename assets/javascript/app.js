@@ -28,7 +28,7 @@ const renderCurrencyList = () => {
     data-cycleLow="${currencyList[i].cyclelow}"
     data-mcap="${currencyList[i].mcap}"
     data-tf="${tFH}"
-     class="material-icons">grade</i></a>
+     class="material-icons" id="fav">grade</i></a>
     <span class="title">${currencyList[i].name}</span>
     <p>Price: ${currencyList[i].price} <br>
        All time high: ${currencyList[i].alltimehigh} <br>
@@ -98,23 +98,50 @@ const myFetch = () => {
   }
 
 myFetch()
-setTimeout(renderCurrencyList, 1000)
+setTimeout(renderCurrencyList, 600)
 
-document.addEventListener('click', event =>{
-  if (event.target.className === 'material-icons') {
-    let currency = event.target.dataset
-    favList.push(currency)
-    localStorage.setItem(`currency`, JSON.stringify(favList))
-    console.log(favList)
-  }
-})
-// console.log(currencyList)
-  // window.addEventListener('load', () => {
-  //   const fetchInterval = 1000
-  
-  //   setInterval(renderCurrencyList, fetchInterval)
-  
-  // })
+// event for storing the currency you want to track in localstorage
+// document.addEventListener('click', event =>{
+//   if (event.target.id === 'fav') {
+//     let currency = event.target.dataset
+//     let key = event.target.dataset.name
+//     key.push(keyArr)
+//     console.log(key)
+//     favList.push(currency)
+//     localStorage.setItem(`${key}`, JSON.stringify(currency))
+//     // console.log(favList)
+//   }
+// })
+
+// const appendingFavs = () => {
+//   let fav = JSON.parse(localStorage.getItem('currency'))
+//   console.log(fav)
+//   for (let i = 0; i < fav.length; i++) {
+//     let favList = document.createElement('div')
+//     if (fav[i].tf > 0) {
+//       color = `green`
+//     } else {
+//       color = `red`
+//     }
+
+//     favList.innerHTML = `
+//     <ul class="collection">
+//     <li class="collection-item avatar">
+//       <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+//       <span class="title">${fav[i].name}</span>
+//       <p>Price: ${fav[i].price} <br>
+//       All time high: ${fav[i].alltimehi} <br>
+//       Cycle Low: ${fav[i].cyclelow} <br>
+//       MCAP: ${fav[i].mcap} <p style="color:${color}" class="tf">24H: ${fav[i].tf}<p>
+//    </p>
+//     </li>
+//     </ul>
+//     `
+//     document.getElementById('favorites').append(favList)
+//   }
+
+// }
+// appendingFavs()
 
 
 
